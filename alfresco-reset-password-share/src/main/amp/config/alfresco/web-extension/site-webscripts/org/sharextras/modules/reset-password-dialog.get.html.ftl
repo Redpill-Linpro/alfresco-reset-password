@@ -7,6 +7,7 @@
             <div class="yui-u first"><label for="${args.htmlid}-email">${msg("label.email")}:</label></div>
             <div class="yui-u" >
                <input type="text" name="email" id="${args.htmlid}-email" />
+               <input type="hidden" name="shareUrl" value="${absurl(url.context)}" />
             </div>
          </div>
          <div class="bdft">

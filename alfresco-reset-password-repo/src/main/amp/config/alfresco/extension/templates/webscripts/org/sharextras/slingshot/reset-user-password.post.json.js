@@ -5,6 +5,7 @@
  * @param json {string}
  *    {
  *       email: "email"
+ *       shareUrl: ${absurl(url.context)}
  *    }
  */
 model.result = false;
@@ -40,13 +41,13 @@ function resetPassword(u)
    people.setPassword(u.userName, u.password);
    return u;
 }
-function mailResetPasswordNotification(u)
+function mailResetPasswordNotification(u, shareUrl)
 {
    // create mail action
    var mail = actions.create("mail"), fromName = person.properties.firstName + " " + person.properties.lastName;
    mail.parameters.to = u.email;
    mail.parameters.subject = msg.get("subject.text");
-   mail.parameters.text = msg.get("template.passwordReset", [u.firstName, u.userName, u.password, fromName]);
+   mail.parameters.html = msg.get("template.passwordReset", [u.firstName, u.userName, u.password, shareUrl, fromName]);
    // execute action against a space
    mail.execute(companyhome);
    return mail;
@@ -99,7 +100,7 @@ function userIsMember(u, g)
 }
 function main()
 {
-   var user, u, email, users, 
+   var user, u, email, shareUrl, users, 
       logResults = s["log-resets"].toString() == "true", 
       disallowedUsers = s["disallowed-users"].toString().split(",");
    
@@ -113,6 +114,14 @@ function main()
    email = json.get("email");
    users = getUsersByEmail(email);
    
+   shareUrl = json.get("shareUrl");
+   if ((json.isNull("shareUrl")) || (json.get("shareUrl") == null) || (json.get("shareUrl").length() == 0)) 
+   {
+	   status.setCode(status.STATUS_BAD_REQUEST, msg.get("error.noShareUrl"));
+	   status.redirect = true;
+	   return;
+   }
+      
    if (users.length == 0) 
    {
       status.setCode(status.STATUS_NOT_FOUND, msg.get("error.notFound", [email]));
@@ -170,7 +179,7 @@ function main()
    // Send e-mail confirmation
    try
    {
-      mailResetPasswordNotification(u);
+      mailResetPasswordNotification(u, shareUrl);
    }
    catch (e)
    {
