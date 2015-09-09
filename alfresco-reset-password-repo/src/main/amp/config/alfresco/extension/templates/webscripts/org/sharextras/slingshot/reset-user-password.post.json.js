@@ -45,6 +45,7 @@ function mailResetPasswordNotification(u, shareUrl)
 {
    // create mail action
    var mail = actions.create("mail"), fromName = person.properties.firstName + " " + person.properties.lastName;
+   mail.parameters.from = getAdminsEmail();
    mail.parameters.to = u.email;
    mail.parameters.subject = msg.get("subject.text");
    mail.parameters.html = msg.get("template.passwordReset", [u.firstName, u.userName, u.password, shareUrl, fromName]);
@@ -85,6 +86,11 @@ function getUsersByEmail(email)
       maxResults = 10,
       peopleCollection = people.getPeople(filter, maxResults);
    return peopleCollection;
+}
+function getAdminsEmail()
+{
+    var admin = people.getPerson('admin');
+    return admin.properties.email;
 }
 function userIsMember(u, g)
 {
