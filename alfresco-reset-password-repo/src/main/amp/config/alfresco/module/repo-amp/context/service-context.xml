@@ -49,7 +49,8 @@
   <bean id="webscript.resources" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
     <property name="resourceBundles">
       <list>
-        <value>alfresco.module.repo-amp.messages.webscripts</value>
+        <!-- <value>alfresco.module.repo-amp.messages.webscripts</value> -->
+        <value>alfresco.module.repo-amp.messages.slingshot</value>
       </list>
     </property>
   </bean>
